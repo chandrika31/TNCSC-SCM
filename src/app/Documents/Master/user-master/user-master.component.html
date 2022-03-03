@@ -1,0 +1,83 @@
+<app-header></app-header>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content">
+  <app-menu *ngIf="canShowMenu"></app-menu>
+  <p-panel>
+    <p-header>
+      <div class="ui-g panel-header">
+        <div class="ui-g-4 dashboard">User Master</div>
+      </div>
+    </p-header>
+    <p-toast position="top-center" key="t-err" [modal]="true"></p-toast>
+    <div class="ui-g-3"></div>
+    <div class="ui-g-12 ui-md-2">
+      <label class="ui-g label-fontsize dashboard" for="rCode">Region</label>
+      <p-dropdown #region class="ui-g ui-fluid" name="rCode" [options]="regionOptions" [(ngModel)]="regionCode" 
+      (onClick)="onSelect('click', 'reg')" (keyup.tab)="onSelect('tab', 'reg')" filter="true"
+      filterMatchMode="startsWith" resetFilterOnHide="true" optionLabel="label"
+      (keyup.shift.tab)="onSelect('tab', 'reg')" [showClear]="true" placeholder="-select-">
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:middle">{{item.label}}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="ui-g-12 ui-md-2">
+      <label class="ui-g label-fontsize dashboard" for="gCode">Godown Name</label>
+      <p-dropdown #godown class="ui-g ui-fluid" [options]="godownOptions" [(ngModel)]="godownCode"
+      (onClick)="onSelect('click', 'gd')" (keyup.shift.tab)="onSelect('tab', 'gd')" filter="true"
+      resetFilterOnHide="true" optionLabel="label" filterMatchMode="startsWith"
+      (keyup.tab)="onSelect('tab', 'gd')" name="gCode" [showClear]="true" placeholder="-select-">
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:middle">{{item.label}}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="ui-g-12 ui-md-2">
+      <label class="ui-g label-fontsize dashboard" for="roleId">Role</label>
+      <p-dropdown #role class="ui-g ui-fluid" [options]="roleIdOptions" [(ngModel)]="roleId"
+      (onClick)="onSelect('click', 'role')" (keyup.shift.tab)="onSelect('tab', 'role')"
+      filterMatchMode="startsWith" filter="true"resetFilterOnHide="true"  optionLabel="label"
+      (keyup.tab)="onSelect('tab', 'role')" [showClear]="true" placeholder="-select-">
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:middle">{{item.label}}</span>
+        </ng-template>
+      </p-dropdown>
+    </div> 
+    <div class="ui-g-4"></div>
+    <div class="head-main" style="margin:0px auto">
+      <div>
+        <form #userMasterForm="ngForm" (ngSubmit)="onSubmit(userMasterForm.value)">
+          <div></div>
+          <div class="ui-float-label" style="margin:0px auto 20px auto; width:40vh">
+            <input class="icon2" type="username" size="30" pInputText [(ngModel)]="formUser.username" name="username"
+              #username="ngModel" autocomplete="off" required>
+            <label for="userName">Username</label>
+          </div>
+          <div class="ui-float-label" style="margin:0px auto 20px auto; width:40vh">
+            <input class="icon2" type="password" size="30" pInputText [(ngModel)]="formUser.password" name="password"
+              #password="ngModel" autocomplete="off" required>
+            <label for="password">Password</label>
+          </div>
+          <div class="ui-float-label" style="margin:0px auto 20px auto; width:40vh">
+            <input class="icon2" type="email" size="30" pInputText [(ngModel)]="formUser.email" name="email"
+              #email="ngModel" autocomplete="off" required>
+            <label for="email">Email</label>
+          </div>
+          <div class="ui-float-label" style="margin:0px auto 20px auto; width:40vh">
+            <input class="icon2" type="phone" size="30" pInputText [(ngModel)]="formUser.phone" name="phone"
+              #phone="ngModel" autocomplete="off" required>
+            <label for="phone">Phone number</label>
+          </div>
+          <div class="ui-float-label" style="margin:0px auto 20px auto; width:40vh">
+            <input class="icon2" type="empId" size="30" pInputText [(ngModel)]="formUser.empId" name="empId"
+              #empId="ngModel" autocomplete="off" required>
+            <label for="empId">Employee Id</label>
+          </div>
+          <div class="bottom" style="margin:27px 30vh auto">
+            <button class="btn" style="padding: 4px 10px 4px 10px" pButton type="button" (click)="onSubmit(userMasterForm)"
+              label=Submit [disabled]="!userMasterForm.form.valid"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-panel>
+</div>

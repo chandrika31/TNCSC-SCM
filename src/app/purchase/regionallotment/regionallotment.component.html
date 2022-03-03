@@ -1,0 +1,232 @@
+<p-blockUI [blocked]="blockScreen">
+  <p-progressSpinner class="spinner" strokeWidth="4" *ngIf="blockScreen"></p-progressSpinner>
+</p-blockUI>
+<app-header></app-header>
+<app-menu *ngIf="canShowMenu"></app-menu>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content" style="margin: 0px !important">
+  <p-panel>
+    <p-header>
+      <div class="ui-g panel-header">
+        <div class="ui-g-12 ui-md-4 dashboard">Allotment - Region Wise</div>
+      </div>
+    </p-header>
+    <div class="ui-g ui-fluid">
+      <p-toast position="top-center" key="t-err" (onClose)="onClose()" [modal]="true"></p-toast>
+      <!--  -->
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+        <form #f="ngForm" name="tenderAllotment">
+          <div class="ui-g-12 ui-fluid dashboard  border-teal">
+            <div class="ui-g-12 ui-fluid">
+              <div class="ui-g-3"></div>
+              <div class="ui-g-6 no-pad-top no-pad-bottom border-teal">
+              <div class="ui-g-12 ui-md-4">
+                <label for="order_Num" class="label-fontsize">Order Number</label>
+                <p-dropdown #orderNum name="order_Num" [options]="orderNoOptions" [(ngModel)]="OrderNo"
+                  (onClick)="onSelect('order', 'click')" (keyup.tab)="onSelect('order', 'tab')"
+                  (onChange)="onChangeOrderNo('1')" filter="true" resetFilterOnHide="true" [readonly]="isViewed"
+                  (keyup.shift.tab)="onSelect('order', 'tab')" filterMatchMode="startsWith" [showClear]="true" required>
+                </p-dropdown>
+              </div>
+              <div class="ui-g-12 ui-md-5" tabindex="-1">
+                <label for="commdity_type" class="label-fontsize">Commodity</label>
+                <input name="commdity_type" type="text" size="15" pInputText [(ngModel)]="Commodity" [readonly]="true">
+              </div>
+              <div class="ui-g-12 ui-md-3" tabindex="-1">
+                <label for="total_Qty" class="label-fontsize">Total Quantity</label>
+                <input name="total_Qty" type="text" size="15" pInputText [(ngModel)]="AllottedQty" [readonly]="true">
+              </div>
+              </div>
+            </div>
+            <div class="ui-g-12 ui-fluid dashboard">
+              <div class="ui-g-2"></div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="party_region" class="label-fontsize">Party Region</label>
+                <p-dropdown #partyregion name="party_region" class="ui-g-12 ui-fluid dashboard"
+                  [options]="partyRegionOptions" [(ngModel)]="PartyRegion" (onClick)="onSelect('preg', 'click')"
+                  (keyup.tab)="onSelect('preg', 'tab')" (ngModelChange)="resetFields('preg')" [showClear]="true"
+                  (keyup.shift.tab)="onSelect('preg', 'tab')" filter="true" filterMatchMode="startsWith" resetFilterOnHide="true">
+                </p-dropdown>
+              </div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="party_Name" class="label-fontsize">Party Name</label>
+                <p-dropdown #party name="party_Name" [options]="partyNameOptions" [(ngModel)]="PartyCode"
+                  (onClick)="onSelect('p_id', 'click')" (keyup.tab)="onSelect('p_id', 'tab')" filter="true"
+                  filterMatchMode="startsWith" resetFilterOnHide="true" [showClear]="true" 
+                  (keyup.shift.tab)="onSelect('p_id', 'tab')" optionLabel="label" required>
+                </p-dropdown>
+              </div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="spell_cycle" class="label-fontsize">Spell</label>
+                <p-dropdown #spell name="spell_cycle" [options]="spellOptions" [(ngModel)]="Spell"
+                  (onClick)="onSelect('spell', 'click')" (keyup.tab)="onSelect('spell', 'tab')" 
+                  (keyup.shift.tab)="onSelect('spell', 'tab')" filter="true"
+                  resetFilterOnHide="true" filterMatchMode="startsWith" [showClear]="true" required>
+                </p-dropdown>
+              </div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="target_Date" class="label-fontsize">Target Date</label>
+                <p-calendar #target_Date name="target_Date" #targetDate="ngModel" [showIcon]="true"
+                  dateFormat="dd/mm/yy" (ngModelChange)="checkTargetDate($event)" [(ngModel)]="TargetDate" required>
+                </p-calendar>
+              </div>
+            </div>
+            <div class="ui-g-12 ui-fluid dashboard">
+              <div class="ui-g-2"></div>
+              <div class="ui-g-6 ui-md-1">
+                <label for="total_days" class="label-fontsize">Total No.Of Days</label>
+                <input pInputText name="total_days" minlength="1" maxlength="3" [(ngModel)]="TotalDays" type="text"
+                  autocomplete="off"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                  required />
+              </div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="assigning_qty" class="label-fontsize">Quantity</label>
+                <input pInputText name="assigning_qty" [(ngModel)]="Quantity" type="text"
+                  (input)="calculateQty(Quantity, '1')" autocomplete="off"
+                  oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                  [readonly]="blockEntry" appDecimalDigit required />
+                <div *ngIf="showErrMsg">
+                  <span style="font-size: 11px; color:crimson;">{{message}}</span>
+                </div>
+              </div>
+              <div class="ui-g-6 ui-md-1">
+                <label for="rate" class="label-fontsize">Rate</label>
+                <input pInputText name="rate" [(ngModel)]="Rate" type="text" autocomplete="off"
+                  oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                  [readonly]="blockEntry" appDecimalAmount required />
+              </div>
+              <div class="ui-g-6 ui-g-4">
+                <div><label class="label-fontsize" for="RemarksText">Remarks</label></div>
+                <textarea name="remarks_text" [rows]="2" [cols]="50" [(ngModel)]="Remarks" pInputTextarea></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="ui-g-12 ui-fluid dashboard">
+          <div class="ui-g-10"></div>
+          <div class="ui-g-4 ui-md-1">
+            <button pButton name="save" label=Save [disabled]="(!f.valid || (isViewed && !f.dirty))"
+              (click)="onSave('1')"></button>
+          </div>
+          <div class="ui-g-4 ui-md-1">
+            <button pButton name="clear" label=Clear (click)="onClear('3')"></button>
+          </div>
+        </div>
+        <div class="ui-g-12 ui-fluid dashboard" tabindex="-1">
+          <p-table [columns]="tenderAllotmentCols" [value]="tenderAllotmentData" autoLayout="true" [paginator]="true"
+            [rows]="20" [loading]="loading" [responsive]="true">
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  {{col.header}}
+                </th>
+                <th style="width:3.2em"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+              <tr [pSelectableRow]="rowData" (dblclick)="onSelectedRow(rowData, rowIndex, '1')">
+                <td *ngFor="let col of columns">
+                  {{rowData[col.field]}}
+                </td>
+                <td *ngIf="rowData['OrderNumber'] !== 'Total'">
+                  <button pButton icon="pi pi-plus" (click)="onSelectedRow(rowData, rowIndex, '2')"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+    <p-dialog header="Region Wise - Tender Allotment" [contentStyle]="{'overflow':'scroll'}" [modal]="true"
+      [maximizable]="true" [(visible)]="showPane" [responsive]="true"
+      [style]="{width: '1000px', height: '1500px !important'}">
+      <div class="ui-g-12 ui-md-12 ui-lg-12 border-teal">
+        <form #rf="ngForm" name="regTenderAllotment">
+          <div class="ui-g-12 dashboard">
+            <div class="ui-g-1"></div>
+            <div class="ui-g-6 ui-md-2" tabindex="-1">
+              <label for="selected_order_Num" class="label-fontsize">Order Number</label>
+              <input name="selected_order_Num" type="text" size="15" pInputText [(ngModel)]="selectedOrderNo"
+                [readonly]="true">
+            </div>
+            <div class="ui-g-6 ui-md-2" tabindex="-1">
+              <label for="selected_commdity_type" class="label-fontsize">Commodity</label>
+              <input name="selected_commdity_type" type="text" size="15" pInputText [(ngModel)]="Commodity"
+                [readonly]="true">
+            </div>
+            <div class="ui-g-6 ui-md-3" tabindex="-1">
+              <label for="selected_party_region" class="label-fontsize">Party Region</label>
+              <input name="selected_party_region" type="text" size="15" pInputText [(ngModel)]="selectedPartyRegion"
+                [readonly]="true">
+            </div>
+            <div class="ui-g-6 ui-md-3" tabindex="-1">
+              <label for="selected_party_name" class="label-fontsize">Party Name</label>
+              <input name="selected_party_name" type="text" size="15" pInputText [(ngModel)]="selectedParty"
+                [readonly]="true">
+            </div>
+          </div>
+          <div class="ui-g-12 dashboard">
+            <div class="ui-g-1"></div>
+            <div class="ui-g-6 ui-md-2" tabindex="-1">
+              <label for="selected_spell" class="label-fontsize">Spell</label>
+              <input name="selected_spell" type="text" size="15" pInputText [(ngModel)]="selectedSpell"
+                [readonly]="true">
+            </div>
+            <div class="ui-g-6 ui-md-2" tabindex="-1">
+              <label for="selected_total_Qty" class="label-fontsize">Total Quantity</label>
+              <input name="selected_total_Qty" type="text" size="15" pInputText [(ngModel)]="RegAllottedQty"
+                [readonly]="true">
+            </div>
+            <div class="ui-g-6 ui-md-3">
+              <label for="region_name" class="label-fontsize">Region Name</label>
+              <p-dropdown #region name="region_name" class="ui-g-12 ui-fluid dashboard" [options]="regionOptions"
+                [(ngModel)]="RCode" (onClick)="onSelect('reg', 'click')" (keyup.tab)="onSelect('reg', 'tab')"
+                [showClear]="true" filter="true" filterMatchMode="startsWith" optionLabel="label" 
+                (keyup.shift.tab)="onSelect('reg', 'tab')" resetFilterOnHide="true" required>
+              </p-dropdown>
+            </div>
+            <div class="ui-g-6 ui-md-2">
+              <label for="splitted_reg_qty" class="label-fontsize">Quantity</label>
+              <input pInputText name="splitted_reg_qty" [(ngModel)]="RegQty" type="text"
+                (input)="calculateQty(RegQty, '2')" [readonly]="blockRegQty" autocomplete="off"
+                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                appDecimalDigit required />
+              <div *ngIf="showRErrMsg">
+                <span style="font-size: 11px; color:crimson;">{{message}}</span>
+              </div>
+            </div>
+            <div class="ui-g-4 ui-md-2" style="margin-top: 20px;">
+              <button pButton name="regSave" label=Save [disabled]="(!rf.valid || (isSelected && !rf.dirty))"
+                (click)="onSave('2')"></button>
+            </div>
+          </div>
+          <div class="ui-g-12 ui-fluid">
+            <p-table [columns]="tenderAllotmentRegionWiseCols" [value]="tenderAllotmentRegionWiseData" [rows]="10"
+              [rowsPerPageOptions]="[10,20,30,40,50,100]" [paginator]="true" selectionMode="single" [responsive]="true"
+              autoLayout="true" [loading]="loading">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="rowData" (dblclick)="onSelectedRow(rowData, rowIndex, '3')">
+                  <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </form>
+      </div>
+    </p-dialog>
+  </p-panel>
+</div>

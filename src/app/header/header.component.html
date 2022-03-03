@@ -1,0 +1,136 @@
+<div>
+  <div class="ui-g-12 ui-md-1" style="padding: inherit">
+    <img href="#default" class="logo" src="../../assets/layout/images/dashboard/tncsc-logo.png" alt="logo"
+      style="max-width: 100px; max-height: 64px;width: 100px;padding-right: initial" routerLink="/Home" />
+  </div>
+  <div class="ui-g-12 ui-md-5" style="padding: inherit">
+    <h1 style="color: rgb(19, 119, 185) !important;padding-top: 10px;">Tamilnadu Civil Supplies Corporation</h1>
+    <h3 style="color: rgb(19, 119, 185) !important; text-align: center">
+      Supply Chain Management-(SCM)
+    </h3>
+  </div>
+
+  <div class="ui-g-12 ui-md-6" style="padding: inherit">
+    <div class="ui-g-4 ui-md-5 no-pad-bottom header-textshadow">
+      <span style="text-align: center !important">{{LoggedIn}}</span>
+    </div>
+    <div style="float: right;text-align: end !important">
+      <i class="fa fa-user-circle fa-2x inline-padding text-color" (click)="onViewUserinfo($event, op)"></i>
+    </div>
+    <div class="head" style="padding-top: 35px;float: right">
+      <a href="http://omnisurv-cloud.com/index" target="_blank" aria-hidden="false" tabindex="0">
+        <i class="fa fa-camera-retro fa-2x header-camera" title="CCTV Details" alt='CCTV'></i>
+      </a>
+      <a href="https://tncsc.aquilatrack.com/" target="_blank" tabindex="0">
+        <i class="fa fa-map-marker fa-2x header-tracking" title="Lorry Tracking" tabindex="0"></i>
+      </a>
+      <a href="https://ds.tncsc-scm.in/" target="_blank">
+        <i class="fa fa-book fa-2x header-accounts" title="Account Details" tabindex="0"></i>
+      </a>
+      <a href="https://tickets.tncsc-scm.in/bugs/" target="_blank">
+        <i class="fa fa-comments-o fa-2x header-bugs" title="Bugs" tabindex="0"></i>
+      </a>
+      <a href=" http://tncsc-edpc.in" target="-blank">
+        <img style="width: 30px; height: 29px;padding-top: 3px" tabindex="0"
+          src="../../assets/layout/images/dashboard/PDS.png" title="DPC" />
+      </a>
+      <a href="http://fci.gov.in/" target="_blank">
+        <img style="width: 30px; height: 29px;padding-top: 3px" tabindex="0"
+          src="../../assets/layout/images/dashboard/FCI.png" title="FCI" />
+      </a>
+      <a href="https://www.tnpds.gov.in" target="_blank">
+        <img style="width: 32px; height: 25px;" tabindex="0" src="../../assets/layout/images/dashboard/G2G.png"
+          title="G2G" /></a>
+    </div>
+    <p-overlayPanel #op [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'">
+      <div class="overlay-content" style="text-align: center;margin: 0px; border: 1px solid #006400" tabindex="-1">
+        <div class="crd hovercard">
+          <div class="crdheader">
+            <!-- <p-fileUpload> -->
+            <img alt="" src="../../assets/layout/images/dashboard/profileBackground-bg.jpg" url="./upload.php"
+              accept="image/*" maxFileSize="1000000">
+            <!-- </p-fileUpload> -->
+          </div>
+          <div class="avatar">
+            <img alt="" src="../../assets/layout/images/dashboard/govt_emblem.png">
+          </div>
+          <div class="info">
+            <div class="desc" style="color: blue">{{userName}}</div>
+            <div class="desc">{{regionName}}</div>
+            <div class="desc">{{godownName}}</div>
+            <div *ngIf="roleId=='3'" class="title">
+              <a href="Godown Profile" style="font-size: 14px">Godown Profile</a>
+            </div>
+            <div *ngIf="roleId=='3'" class="title">
+              <a href="GodownEmployeeDetails" style="font-size: 14px">Employee Details</a>
+            </div>
+            <br>
+
+            <div class="title">
+              <a href="#" data-target="#pwdModal" data-toggle="modal" style="font-size: 14px">Change Password?</a>
+            </div>
+          </div>
+          <div class="bottom">
+            <div class="overlay-footer">
+              <!-- <button class="ui-g-12 ui-md-8" pButton type="button" label="Change Password?" style="float: left" (click)="onForgetPswd()"></button> -->
+              <button class="btnn" pButton type="button" label="Logout" icon="fa fa-sign-out"
+                (click)="onLogOut()"></button>
+              <!-- <button class="btn" type="button" (click)="onSignIn()">Sign In</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-overlayPanel>
+    <div id="pwdModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <!-- <p-toast [style]="{background: '#FFAEAE'}" position="top-center" key="t-err"></p-toast> -->
+      <div class="modal-dialog" style="padding-top: 160px">
+        <div>
+          <i style="float: right; color: aliceblue" class="fas fa-times-circle"></i>
+        </div>
+        <div class="modal-content">
+          <p-toast position="top-center" key="t-err" (onClose)="onClose()" [modal]="true"></p-toast>
+          <div class="modal-body">
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="text-center">
+                    <p style="color: dimgray">Change Password!</p>
+                    <div class="panel-body">
+                      <fieldset>
+                        <form [formGroup]="ChangeForm" ngSubmit="onForgetPswd()">
+                          <div class="form-group" style="margin: 0px !important">
+                            <div for="Username" class="icon2">
+                              <!-- <input class="form-control input-lg" type="name" placeholder="Username" name="Username" [ngModel]="onForgetPswd()" autocomplete="off"> -->
+                              <input type="text" class="form-control input-lg" formControlName="user" id="userName"
+                                [(ngModel)]="userName" readonly="true" placeholder="Username" filter="true"
+                                filterMatchMode="startsWith" tabindex="0" required>
+                            </div>
+                            <div for="OldPassword" class="icon2">
+                              <!-- <input class="form-control input-lg" type="password" placeholder="Old Password" name="Oldpassword" minlength="6" pInputText autocomplete="off"> -->
+                              <input type="password" class="form-control input-lg" id="OldPassword"
+                                formControlName="pswd" [(ngModel)]="OldPassword" placeholder="Old Password">
+                            </div>
+                            <div for="password" class="icon2">
+                              <!-- <input class="form-control input-lg" type="password" placeholder="New Password" minlength="6" name="password" autocomplete="off"> -->
+                              <input type="password" class="form-control input-lg" id="NewPassword"
+                                formControlName="Newpswd" [(ngModel)]="NewPassword" placeholder="New Password"
+                                minlength="4" required>
+                            </div>
+                            <div class="header-left-bottom">
+                              <button class="btn" style="width: 20%; margin: 10px;" value="Change My Password"
+                                type="submit" (click)="onNew()">Submit</button>
+                            </div>
+                          </div>
+                        </form>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

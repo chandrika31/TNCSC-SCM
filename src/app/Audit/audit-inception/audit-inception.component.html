@@ -1,0 +1,214 @@
+<p-blockUI [blocked]="blockScreen">
+    <p-progressSpinner class="spinner" strokeWidth="4" *ngIf="blockScreen"></p-progressSpinner>
+  </p-blockUI>
+  <app-header></app-header>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content">
+    <app-menu *ngIf="canShowMenu"></app-menu>
+    <p-panel>
+        <p-header>
+            <div class="ui-g panel-header">
+                <div class="ui-g-12 ui-md-4 dashboard">Audit - Inspection</div>
+            </div>
+        </p-header>
+        <div class="ui-g ui-fluid">
+            <p-toast (onClose)="onClose()" position="top-center" key="t-err" [modal]="true"></p-toast>
+            <form #f="ngForm" name="inspectionForm">
+                <div class="ui-g-12 ui-md-12 border-teal">
+                    <div class="ui-g-12 no-pad-top" style="color: #18c5a9;text-decoration: underline;">Inspection Details
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                        <div class="ui-g-6 ui-md-2 no-left-pad" style="margin-top: -20px">
+                            <label for="Region" class="label-fontsize-large">Region</label>
+                            <p-dropdown #region name="Region" [options]="regionOptions" [(ngModel)]="RCode" (onClick)="onSelect('reg', 'click')"
+                            (keyup.shift.tab)="onSelect('reg', 'tab')" (keyup.tab)="onSelect('reg', 'tab')"
+                             filter="true" resetFilterOnHide="true" [showClear]="true" (ngModelChange)="onReset('reg')"
+                             filterMatchMode="startsWith" required>
+                            </p-dropdown>
+                          </div>
+                        <div class="ui-g-6 ui-md-2" style="margin-top: -20px">
+                          <label for="Godown" class="label-fontsize-large">Godown</label>
+                          <p-dropdown #godown name="Godown" [options]="godownOptions" [(ngModel)]="GCode"
+                          (onClick)="onSelect('gd', 'click')" filter="true"
+                          (keyup.shift.tab)="onSelect('gd', 'tab')" (keyup.tab)="onSelect('gd', 'tab')"
+                            resetFilterOnHide="true" [showClear]="true" filterMatchMode="startsWith" required>
+                          </p-dropdown>
+                        </div>
+                        <div class="ui-g-6 ui-md-2" style="margin-top: -20px">
+                            <label for="InspectionTeam" class="label-fontsize-large">Inspection Team</label>
+                            <p-dropdown #inspection name="InspectionTeam" [options]="inspectionTeamOptions"
+                                [(ngModel)]="ITeam" (onClick)="onSelect('it', 'click')" appendTo="body"
+                                (keyup.shift.tab)="onSelect('it', 'tab')" (keyup.tab)="onSelect('it', 'tab')"
+                                optionLabel="label" required>
+                            </p-dropdown>
+                        </div>
+                        <div class="ui-g-6 ui-md-2" style="margin-top: -20px">
+                                <label for="PName" class="label-fontsize-large">Name</label>
+                                <input name="PName" type="text" size="50" pInputText autocomplete="off" minlength="1"
+                                    maxlength="50" [(ngModel)]="Name">
+                        </div>
+                        <div class="ui-g-6 ui-md-2" style="margin-top: -20px">
+                            <label for="DesignationType" class="label-fontsize-large">Designation</label>
+                            <p-dropdown #designation name="DesignationType" [options]="designationOptions"
+                                [(ngModel)]="Designation" (onClick)="onSelect('des', 'click')" appendTo="body"
+                                (keyup.shift.tab)="onSelect('des', 'tab')" optionLabel="label"
+                                (keyup.tab)="onSelect('des', 'tab')" filterMatchMode="startsWith"
+                                filter="true" resetFilterOnHide="true" [showClear]="true" required>
+                            </p-dropdown>
+                        </div>
+                        <div class="ui-g-6 ui-md-2" style="margin-top: -20px">
+                            <label for="InspectionDate" class="label-fontsize-large">Inspection Date</label>
+                            <p-calendar name="InspectionDate" dateFormat="dd/mm/yy" [(ngModel)]="IDate"
+                                [maxDate]="maxDate" maxlength="20" [showIcon]="true">
+                            </p-calendar>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-12 border-teal spacing-content">
+                    <div class="ui-g-12 no-pad-top" style="color: #18c5a9;text-decoration: underline;">Item Details
+                    </div>
+                    <div class="ui-g-12 ui-md-12">
+                        <div class="ui-g-12 ui-md-2 ui-fluid no-left-pad" style="margin-top: -20px">
+                        <label for="CurYear" class="label-fontsize-large">CurrYear</label>
+                        <p-dropdown #curYear name="CurYear" [options]="curYearOptions" 
+                            [(ngModel)]="CurrYear" (onClick)="onSelect('cy', 'click')"
+                             (keyup.shift.tab)="onSelect('cy', 'tab')" (onChange)="onChange('cy')"
+                            (keyup.tab)="onSelect('cy', 'tab')" filterMatchMode="startsWith"
+                            filter="true" resetFilterOnHide="true" [showClear]="true" 
+                            >
+                        </p-dropdown>
+                    </div>
+                    <div class="ui-g-12 ui-md-3 ui-fluid" style="margin-top: -20px">
+                        <label for="Commodity" class="label-fontsize-large">Commodity</label>
+                        <p-dropdown #commodity name="Commodity" [options]="commodityOptions" 
+                            [(ngModel)]="ITCode" optionLabel="label"
+                            (onClick)="onSelect('cd', 'click')" (keyup.shift.tab)="onSelect('cd', 'tab')"
+                            (keyup.tab)="onSelect('cd', 'tab')" filterMatchMode="startsWith"
+                            filter="true" resetFilterOnHide="true" [showClear]="true" 
+                            (onChange)="onChange('cd')" >
+                        </p-dropdown>
+                    </div>
+                    <div class="ui-g-12 ui-md-2 ui-fluid" style="margin-top: -20px">
+                        <label for="StackNo" class="label-fontsize-large">Stack No</label>
+                        <p-dropdown #stackNo name="StackNo" [options]="stackNoOptions" [(ngModel)]="TStockNo"
+                            (onClick)="onSelect('st', 'click')" (keyup.shift.tab)="onSelect('st', 'tab')"
+                            (keyup.tab)="onSelect('st', 'tab')" filterMatchMode="startsWith"
+                            filter="true" resetFilterOnHide="true" [showClear]="true"
+                            optionLabel="label" >
+                        </p-dropdown>   
+                    </div>
+                    <div class="ui-g-12 ui-md-2 ui-fluid" style="margin-top: -20px">
+                            <label for="Quantity" class="label-fontsize-large">Quantity</label>
+                            <input name="Quantity" type="text" size="20" pInputText autocomplete="off" minlength="1"
+                                maxlength="15" [(ngModel)]="IQuantity"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                                appDecimalDigit>
+                    </div>
+                    <div class="ui-g-12 ui-md-2 ui-fluid" style="margin-top: -20px">
+                        <label for="Type" class="label-fontsize-large">CB Difference</label>
+                        <p-dropdown #Type name="Type" [options]="typeOptions" [(ngModel)]="Report"
+                            (onClick)="onSelect('ty', 'click')" (keyup.shift.tab)="onSelect('ty', 'tab')"
+                            (keyup.tab)="onSelect('ty', 'tab')" optionLabel="label" >
+                        </p-dropdown>
+                    </div>
+                    <div class="form-group ui-g-4 ui-md-1">
+                        <button pButton type="button" label=Enter (click)="onEnter()"
+                        [disabled]="(!CurrYear || !ITCode || !Report || !IQuantity || !TStockNo)"></button>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 dashboard">
+                        <p-table #dt [columns]="inspectionCols" [value]="inspectionData" [rows]="10"
+                            [totalRecords]="totalRecords" [rowsPerPageOptions]="[10,20,30,40,50,100]"
+                            selectionMode="single" [responsive]="true" autoLayout="true" [paginator]="true"
+                            [loading]="loading">
+                            <ng-template pTemplate="header" let-columns>
+                                <tr style="text-align: center;">
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                    <th style="width:2em"></th>
+                                    <th style="width:2em"></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                                <tr >
+                                    <td *ngFor="let col of columns">
+                                        {{rowData[col.field]}}
+                                    </td>
+                                    <td style="width:2em" >
+                                        <button pButton icon="pi pi-pencil" (click)="onSelectedRow(rowData, rowIndex, '1')"></button>
+                                      </td >
+                                      <td style="width:2em">
+                                        <button pButton icon="pi pi-trash" (click)="onSelectedRow(rowData, rowIndex, '2')"></button>
+                                      </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <div class="ui-g-6 ui-md-6 no-left-pad">
+                        <label for="RemarksText" class="label-fontsize-large">Remarks</label>
+                        <textarea pInputText rows="5" name="RemarksText" cols="70" maxlength="2000" pInputTextarea
+                                [(ngModel)]="Remarks" autocomplete="off" required></textarea>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-12 no-pad-top" style="margin-top: -10px;">
+                    <div class="ui-g-9"></div>
+                    <div class="form-group ui-g-4 ui-md-1">
+                        <button pButton type="button" label=View (click)="onView()"
+                        [disabled]="(!RCode || !GCode)"></button>
+                    </div>
+                    <div class="form-group ui-g-4 ui-md-1">
+                        <button pButton type="button" label=Save (click)="onSave()"
+                        [disabled]="(!f.valid)"></button>
+                    </div>
+                    <div class="form-group ui-g-4 ui-md-1">
+                        <button pButton type="button" label=Clear (click)="onClear('1')"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-panel>
+</div>
+<p-dialog header="Inspection Details" [contentStyle]="{'overflow':'scroll'}" [modal]="true" [maximizable]="true"
+  [(visible)]="viewPane" [responsive]="true">
+  <div>
+    <div class="ui-g-6 ui-md-8 no-pad-top">
+      <label class="label-fontsize-large">Date</label>
+      <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" [maxDate]="maxDate" [(ngModel)]="viewDate"
+        (ngModelChange)="onView()"></p-calendar>
+    </div>
+    <div class="ui-g-4 ui-md-1 dashboard">
+      <button class="ui-md-10 dashboard" pButton label=OK [disabled]="(!selected || selected==null)"
+        (click)="getInspectionDetails()"></button>
+    </div>
+    <div class="ui-g-4 ui-md-1 dashboard">
+      <button class="ui-md-10 dashboard" pButton label=Cancel (click)="viewPane = false"></button>
+    </div>
+  </div>
+  <div class="ui-g-12 ui-fluid">
+    <p-table tabindex="-1" [columns]="inspectionDetailsCols" [value]="inspectionDetailsData" [rows]="10"
+      [rowsPerPageOptions]="[10,20,30,40,50,100]" [paginator]="true" [(selection)]="selected" selectionMode="single"
+      [responsive]="true" autoLayout="true" (onRowSelect)="onRowSelect($event)">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" style="width:80px">
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>

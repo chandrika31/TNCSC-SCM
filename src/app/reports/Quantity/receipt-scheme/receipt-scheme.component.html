@@ -1,0 +1,86 @@
+<app-header></app-header>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content">
+  <app-menu *ngIf="canShowMenu"></app-menu>
+  <p-panel>
+    <p-header>
+      <div class="ui-g panel-header">
+        <div class="ui-g-4 dashboard">Receipts - Scheme Godown Wise</div>
+        <div class="ui-g-12 ui-md-8 dashboard" style="padding-left: 45%">
+          <button pButton class="ui-g-3 dashboard inline-margin" type="button" label=View (click)="onView()" 
+            [disabled]="(!fromDate || !toDate || !GCode || !RCode || !SCode)"></button>
+          <button pButton class="ui-g-3 dashboard inline-margin" type="button" label=Excel (click)="dt.exportCSV()" [disabled]="(receiptSchemeData.length=='0')"></button>
+          <button pButton class="ui-g-3 dashboard inline-margin" type="button" label=Print (click)="onPrint()" [disabled]="(receiptSchemeData.length=='0')"></button>
+        </div> 
+      </div>
+    </p-header>
+    <p-toast (onClose)="onClose()" position="top-center" key="t-err" [modal]="true"></p-toast>
+    <div class="ui-g ui-fluid">
+          <div class="ui-g-12 ui-md-2">
+            <label class="ui-g-7 label-fontsize dashboard">Region</label>
+            <p-dropdown #region class="ui-g-12 ui-fluid dashboard" [options]="regionOptions" [(ngModel)]="RCode" (onClick)="onSelect('reg', 'click')"
+              (keydown.enter)="onSelect('reg', 'enter')" (ngModelChange)="onResetTable('reg')" filter="true" resetFilterOnHide="true" optionLabel="label"
+              filterMatchMode="startsWith" [showClear]="true" placeholder="-select-">
+              <ng-template let-item pTemplate="selectedItem">
+                <span style="vertical-align:middle">{{item.label}}</span>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        <div class="ui-g-12 ui-md-2">
+          <label class="ui-g-7 label-fontsize dashboard">Godown</label>
+          <p-dropdown #godown class="ui-g-12 ui-fluid dashboard" [options]="godownOptions" [(ngModel)]="GCode" (onClick)="onSelect('gd', 'click')"
+            (keydown.enter)="onSelect('gd', 'enter')" (ngModelChange)="onResetTable('gd')" optionLabel="label" filter="true"
+            resetFilterOnHide="true" [showClear]="true" filterMatchMode="startsWith" placeholder="-select-">
+            <ng-template let-item pTemplate="selectedItem">
+              <span style="vertical-align:middle">{{item.label}}</span>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="ui-g-12 ui-md-2">
+          <label class="ui-g-7 label-fontsize dashboard">Scheme</label>
+          <p-dropdown #scheme class="ui-g-12 ui-fluid dashboard" [options]="schemeOptions" [(ngModel)]="SCode" (onClick)="onSelect('sc', 'click')"
+            (keydown.enter)="onSelect('sc', 'enter')" (ngModelChange)="onResetTable('sc')" optionLabel="label" filter="true"
+            resetFilterOnHide="true" [showClear]="true" filterMatchMode="startsWith" placeholder="-select-">
+            <ng-template let-item pTemplate="selectedItem">
+              <span style="vertical-align:middle">{{item.label}}</span>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="ui-g-12 ui-md-2">
+          <label class="ui-g-7 label-fontsize dashboard">From</label>
+          <p-calendar [(ngModel)]="fromDate" [showIcon]="true" [maxDate]="maxDate" dateFormat="dd/mm/yy"
+            (ngModelChange)="onDateSelect()"></p-calendar>
+        </div>
+        <div class="ui-g-12 ui-md-2">
+          <label class="ui-g-7 label-fontsize dashboard">To</label>
+          <p-calendar [(ngModel)]="toDate" [showIcon]="true" [maxDate]="maxDate" dateFormat="dd/mm/yy"
+            (ngModelChange)="onDateSelect()"></p-calendar>
+        </div>
+          <div class="ui-g-12 dashboard">
+            <p-table #dt [columns]="receiptSchemeCols" [value]="receiptSchemeData" [rows]="20" [rowsPerPageOptions]="[10,20,30,40,50,100]"
+            [paginator]="true" [responsive]="true" autoLayout="true" [loading]="loading" exportFilename="RECEIPT_SCHEME_ABSTRACT_RECEIPT">
+             <ng-template pTemplate="header" let-columns>
+                <tr style="text-align: center;">
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns">
+                     <div *ngIf="col.field === 'sno' || col.field === 'COMMODITY' || col.field === 'PACKINGNAME' || col.field === 'GODOWNNAME'">
+                        {{rowData[col.field]}}
+                      </div>
+                      <div *ngIf="col.field !== 'sno' && col.field !== 'COMMODITY' && col.field !== 'PACKINGNAME' && col.field !== 'GODOWNNAME'">
+                        <div style="text-align: end !important">
+                          {{rowData[col.field]}}
+                        </div>
+                      </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+        </div>
+    </div>
+  </p-panel>
+</div>

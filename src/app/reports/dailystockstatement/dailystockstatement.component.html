@@ -1,0 +1,43 @@
+<app-header></app-header>
+<div class="ui-g-12 content">
+    <app-menu *ngIf="canShowMenu"></app-menu>
+    <p-panel>
+      <p-header>
+        <div class="ui-g panel-header">
+          <div class="ui-g-4 dashboard">Daily Stock Statement</div>
+            <div class="ui-g-8 dashboard" style="text-align: end !important;">
+              <input class="search-masters" type="text" [(ngModel)]="searchText" pInputText placeholder="Search" (ngModelChange)="onSearch($event)">
+              <button class="inline-padding" pButton type="button" icon="fa fa-search" class="ui-button-warn"></button>
+              <p-splitButton class="inline-padding" label="Export" icon="pi pi-download" [model]="items"
+              styleClass="ui-button-danger"></p-splitButton>
+              <button class="inline-padding" pButton type="button" icon="fa fa-print" class="ui-button-warn" (click)="print()"></button>
+            </div>
+        </div>
+      </p-header>
+      <div #dailyStockTable class="ui-g ui-md-12" style="text-align:left; display:grid">
+        <p-treeTable  [value]="dailyStockData" [columns]="dailyStockDataColumns" [rows]="20" [rowsPerPageOptions]="[10,20,30,40,50,100]" [loading]="loading" [totalRecords]="totalRecords"
+          [paginator]="true" autoLayout="true" selectionMode="single" (onRowSelect)="onRowSelect($event)" [resizableColumns]="true" dataKey="Name" >
+          <ng-template pTemplate="header" let-columns>
+              <tr [ttRow]="rowNode" style="text-align: center;">
+            <th *ngFor="let col of columns" ttResizableColumn>
+              {{col.header}}
+            </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns" let-rowIndex="rowIndex">
+            <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+              <td *ngFor="let col of columns; let i = index">
+                <p-treeTableToggler [rowNode]="rowNode" *ngIf="i==0"></p-treeTableToggler>
+                <div *ngIf="col.field !== 'Name'">
+                   <span style="float: right"> {{rowData[col.field]}} </span>
+                  </div>
+                  <div *ngIf="col.field === 'Name'">
+                    {{rowData[col.field]}}
+                  </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-treeTable>
+      </div>
+    </p-panel>
+  </div>

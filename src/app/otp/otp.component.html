@@ -1,0 +1,47 @@
+<app-header></app-header>
+<!-- <div class="ui-g-12 ui-md-12 ui-lg-12 content"> -->
+  <!-- <app-menu *ngIf="canShowMenu"></app-menu> -->
+  
+  <p-panel class="ui-g-12 ui-md-12" >    
+        <p-header>
+          <div class="ui-g panel-header">
+            <div >OTP Verification
+
+            </div>
+          
+          </div>
+        </p-header>
+        <p-toast position="top-center" key="t-err" [modal]="true"></p-toast> 
+               <div class="ui-g"  style="border: 8px solid lightgray;">
+                  <div class="ui-g-12 ">
+                           <div class="ui-g-4 ">
+
+                           </div>
+                          <div class="ui-g-4 " >
+                                <div class="ui-float-label">
+                                  <input class="icon2" type="text"  pInputText [(ngModel)]="Otp" name="Otp"
+                                    autocomplete="off"  >
+                                  <label for="Otp">Enter OTP</label>
+                                </div>
+                           </div>  
+                              <div class="ui-g-4" style="padding-top: 23px;">
+                                <button pButton class="inline-padding" type="button" (click)="onSubmit()" label=Submit></button>
+                              </div>
+                      
+                  </div>   
+                  <div class="ui-g-12 " style="border: 4px solid lightgray;text-decoration-color: brown;">
+                    <label >You will receive your OTP through your phone, we are working on it.
+                       Until please use this Otp  123                      
+                    </label>
+                   
+                  </div> 
+                  <div class="ui-g-12 " style="border: 4px solid lightgray;">
+                   
+                    <label >
+                      You need to fill employee details and Godown Profile details to get OTP through mobile phone.
+                    </label>
+                  </div> 
+              </div>
+            
+        
+      </p-panel>

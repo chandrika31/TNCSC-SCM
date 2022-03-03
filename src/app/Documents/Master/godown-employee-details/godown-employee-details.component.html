@@ -1,0 +1,341 @@
+<app-header></app-header>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content">
+  <app-menu *ngIf="canShowMenu"></app-menu>
+  <p-panel>
+    <p-header>
+      <div class="ui-g panel-header">
+        <div class="ui-g-4 dashboard">Employee Master</div>
+      </div>
+    </p-header>
+    <p-toast (onClose)="onClose()" position="top-center" key="t-err" [modal]="true"></p-toast>
+    <div class="ui-g">
+      <div class="ui-g-12" style="padding-right: 70px">
+        <div class="ui-g-12 ui-md-2"></div>
+        <div class="ui-g-6 ui-md-2 ui-fluid" style="margin-top: 13px">
+          <span class="ui-float-label">
+            <input class="icon2" name="RegionName" [readOnly]="true" [(ngModel)]="RName" pInputText autocomplete="off"
+              required>
+            <label for="RegionName" class="float-input">Region Name</label>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-md-2 ui-fluid" style="margin-top: 13px">
+          <span class="ui-float-label">
+            <input class="icon2" name="GodownName" [readOnly]="true" [(ngModel)]="GName" pInputText autocomplete="off"
+              required>
+            <label for="GodownName" class="float-input">Godown Name</label>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-md-1" style="padding-top: 26px;">
+          <p-radioButton name="Regular" value="R" label="Reguar" for="Regular" [(ngModel)]="Regular"></p-radioButton>
+        </div>
+        <div class="ui-g-6 ui-md-1" style="padding-top: 26px;">
+          <p-radioButton name="Regular" value="L" label="LoadMen" for="Regular" [(ngModel)]="Regular"></p-radioButton>
+        </div>
+        <div class="ui-g-12 ui-md-2 ui-fluid" style="padding-top: 20px;">
+          <div class="ui-float-label">
+            <input class="icon2" type="text" size="30" pInputText [(ngModel)]="Empno" name="Empno" autocomplete="off"
+              oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+              onKeyDown="if(this.value.length==7 && event.keyCode!=8) return false;" required>
+            <label for="Empno">EEPF Number</label>
+          </div>
+        </div>
+        <div class="ui-g-6 ui-md-1 ui-fluid" style="padding-top: 21px;">
+          <button style="padding: 2px 17px 2px 17px" pButton type="button" label=View (click)="onView()"
+            [disabled]="(!Empno || !Regular)"></button>
+        </div>
+        <!-- <div class="ui-g-6 ui-md-1 ui-fluid" style="padding-top: 21px">
+          <button pButton type="button" icon="pi pi-plus" label=Add (click)="onAdd()" [disabled]="(!Empno)"></button>
+        </div> -->
+        <div class="ui-g-12 ui-md-2"></div>
+      </div>
+
+
+      <div *ngIf="OnEdit" class="ui-g-12" style="border: 1px solid #18c5a9; margin: 20px;">
+        <div>
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-5"></div>
+            <div class="ui-g-12 ui-md-3">Godown Employee Details</div>
+            <div class="ui-g-12 ui-md-5"></div>
+          </div>
+          <form #employeeForm="ngForm" (ngSubmit)="onSubmit(formUser)">
+            <div class="ui-g">
+              <div class="ui-g-12 ui-md-1"></div>
+              <div class="ui-g-12 ui-md-2" style="padding-top: 22px;">
+                <div class="ui-float-label">
+                  <input class="icon2" type="text" size="30" pInputText [(ngModel)]="Empno" name="Empno"
+                    autocomplete="off" [readonly]="true"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                    onKeyDown="if(this.value.length==6 && event.keyCode!=8) return false;" required>
+                  <label for="Empno">EEPF Number</label>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-4" style="padding-top: 22px;">
+                <div class="ui-float-label">
+                  <input class="icon2" size="30" pInputText [(ngModel)]="Empname" name="Empname" autocomplete="off"
+                    required>
+                  <label for="Empname">Employee Name</label>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                <div class="ui-g dashboard">
+                  <label class="ui-g label-fontsize-large" for="Designation">Designation</label>
+                  <p-dropdown #designation class="ui-g-12 ui-fluid dashboard" [options]="designationOptions"
+                    [(ngModel)]="Designation" (onClick)="onSelect('d', 'click')"
+                    (keyup.shift.tab)="onSelect('d', 'tab')" filter="true" resetFilterOnHide="true"
+                    filterMatchMode="startsWith" optionLabel="label" (keyup.tab)="onSelect('d', 'tab')"
+                    [showClear]="true" name="Designation" required>
+                    <ng-template let-item pTemplate="selectedItem">
+                      <span style="vertical-align:middle">{{item.label}}</span>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-1"></div>
+            </div>
+
+            <div class="ui-g">
+              <div class="ui-g-12 ui-md-1"></div>
+              <div class="ui-g-12 ui-md-2" style="padding-top: 20px;">
+                <div class="ui-float-label">
+                  <input class="icon2" type="Refno" size="30" pInputText [(ngModel)]="Refno" name="Refno"
+                    autocomplete="off" required>
+                  <label for="Refno">Reference No</label>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-2">
+                <div class="ui-g">
+                  <label class="ui-g-10 label-fontsize dashboard" for="Refdate">Reference Date</label>
+                  <p-calendar class="ui-g-12 ui-fluid dashboard" [showIcon]="true" dateFormat="mm/dd/yy"
+                    [maxDate]="maxDate" name="Refdate" [(ngModel)]="Refdate" (ngModelChange)="onDateSelect()">
+                  </p-calendar>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-2 dashboard">
+                <div class="ui-g-12 ui-md-6" style="padding-top: 26px;">
+                  <p-radioButton name="Jrtype" value="J" label="Join" for="Jrtype" [(ngModel)]="Jrtype"
+                    (ngModelChange)="onRelieve()"></p-radioButton>
+                </div>
+                <div class="ui-g-12 ui-md-6" style="padding-top: 26px;">
+                  <p-radioButton name="Jrtype" value="R" label="Relieve" for="Jrtype" [(ngModel)]="Jrtype"
+                    (ngModelChange)="onRelieve()">
+                  </p-radioButton>
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-2">
+                <div class="ui-g">
+                  <label class="ui-g-10 label-fontsize dashboard" for="Jrdate">Join Date</label>
+                  <p-calendar class="ui-g-12 ui-fluid dashboard" [showIcon]="true" dateFormat="mm/dd/yy"
+                    [maxDate]="maxDate" name="Jrdate" [(ngModel)]="Jrdate" (ngModelChange)="onDateSelect()"
+                    [disabled]="(!Join)">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-2">
+                <div class="ui-g">
+                  <label class="ui-g-10 label-fontsize dashboard" for="Rdate">Releive Date</label>
+                  <p-calendar class="ui-g-12 ui-fluid dashboard" [showIcon]="true" dateFormat="mm/dd/yy"
+                    [maxDate]="maxDate" name="Rdate" [(ngModel)]="Rdate" (ngModelChange)="onDateSelect()"
+                    [disabled]="(!Relieve)">
+                  </p-calendar>
+                </div>
+              </div>
+              <div class="ui-g-12 ui-md-1"></div>
+            </div>
+
+            <!-- <div class="ui-g">
+              <div class="ui-g-12 ui-md-5">
+                <div id="signature-pad" class="m-signature-pad">
+                  <div class="m-signature-pad-body">
+                    <signature-pad [options]="SignaturePadOptions"></signature-pad>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="ui-g">
+              <div class="ui-g-12 ui-md-5"></div>
+              <!-- <div class="bottom" style="padding-left: 95px"> -->
+              <div class="ui-g-6 ui-md-1 ui-fluid">
+                <button class="btn" style="padding: 4px 10px 4px 10px" pButton type="button"
+                  (click)="onSubmit(formUser)" label=Submit
+                  [disabled]="(!Empno || !Empname || !Designation || !Refno || !Refdate || !Jrdate || !Jrtype || !Regular)"></button>
+              </div>
+              <div class="ui-g-6 ui-md-1 ui-fluid">
+                <button class="btn" style="padding: 4px 10px 4px 10px" pButton type="button" (click)="onClear()"
+                  label=Clear></button>
+              </div>
+              <div class="ui-g-12 ui-md-5"></div>
+              <!-- </div> -->
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <p-table #dt [columns]="GodownEmployeeCols" [value]="GodownEmployeeData" [rows]="20"
+          exportFilename="GODOWN_EMPLOYEE_DETAILS" [rowsPerPageOptions]="[10,20,30,40,50,100]" selectionMode="single"
+          [responsive]="true" autoLayout="true" [paginator]="true">
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col *ngFor="let col of columns" style="width:80px">
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns">
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+            <tr [pSelectableRow]="rowData" (dblclick)="onRow($event, rowData)">
+              <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+    </div>
+  </p-panel>
+</div>
+
+<p-dialog header="Employee Details" [contentStyle]="{'overflow':'scroll'}" [modal]="true" [maximizable]="true"
+  [(visible)]="viewPane" [responsive]="true">
+  <div class="ui-g-12 ui-fluid">
+    <p-table #dt [columns]="EmployeeCols" [value]="EmployeeData" [rows]="20" exportFilename="EMPLOYEE_DETAILS"
+      [rowsPerPageOptions]="[10,20,30,40,50,100]" selectionMode="single" [responsive]="true" autoLayout="true"
+      [paginator]="true" (onRowSelect)="onRowSelect($event)">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" style="width:80px">
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="ui-g-4 ui-md-9"></div>
+  <div class="ui-g-4 ui-md-1 no-right-pad">
+    <button class="ui-g-10 dashboard" pButton label=OK [disabled]="disableOkButton"
+      (click)="showSelectedData()"></button>
+  </div>
+  <div class="ui-g-4 ui-md-1">
+    <button class="ui-g-10 dashboard" pButton type="button" [disabled]="!EmployeeData" label=Excel
+      (click)="dt.exportCSV()"></button>
+  </div>
+  <div class="ui-g-4 ui-md-1 no-left-pad">
+    <button class="ui-g-10 dashboard" pButton label=Cancel (click)="viewPane = false"></button>
+  </div>
+</p-dialog>
+
+
+
+<!-- <div class="ui-g">
+  <div class="ui-g-12" style="padding-right: 70px">
+    <div class="ui-g-12 ui-md-4"></div>
+    <div class="ui-g-6 ui-md-2">
+      <label class="ui-g-7 label-fontsize dashboard">Region</label>
+      <p-dropdown #region class="ui-fluid dashboard" [options]="regionOptions" [(ngModel)]="RCode"
+        (onClick)="onSelect('reg', 'click')" (keydown.enter)="onSelect('reg', 'enter')" [showClear]="true"
+        (ngModelChange)="onResetTable('reg')" filter="true" resetFilterOnHide="true" placeholder="-select-">
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:middle">{{item.label}}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="ui-g-6 ui-md-2">
+      <label class="ui-g-7 label-fontsize dashboard">Godown</label>
+      <p-dropdown #godown class="ui-fluid dashboard" [options]="godownOptions" [(ngModel)]="GCode"
+        (onClick)="onSelect('gd', 'click')" (keydown.enter)="onSelect('gd', 'enter')"
+        (ngModelChange)="onResetTable('gd')" filter="true" resetFilterOnHide="true" [showClear]="true"
+        placeholder="-select-">
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:middle">{{item.label}}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="ui-g-4 ui-md-1" style="padding-top: 20px;">
+      <button class="btn" style="padding: 2px 17px 2px 17px" pButton type="button" label=View
+        (click)="onView()"></button>
+    </div>
+    <div class="ui-g-12 ui-md-3"></div>
+  </div>
+  <div class="employee-main">
+    <div>
+      <form #employeeForm="ngForm" (ngSubmit)="onSubmit(formUser)">
+        <div class="ui-float-label" style="margin-bottom: 20px">
+          <input class="icon2" type="number" size="30" pInputText [(ngModel)]="Empno" name="Empno"
+            autocomplete="off"
+            oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+            onKeyDown="if(this.value.length==6 && event.keyCode!=8) return false;" required>
+          <label for="Empno">EEPF Number</label>
+        </div>
+        <div class="ui-float-label" style="margin-bottom: 20px">
+          <input class="icon2" size="30" pInputText [(ngModel)]="Empname" name="Empname" autocomplete="off"
+            required>
+          <label for="Empname">Employee Name</label>
+        </div>
+        <div class="ui-g dashboard" style="margin-bottom: 20px">
+          <label class="ui-g label-fontsize-large" for="Designation">Designation</label>
+          <p-dropdown #designation class="ui-g-12 ui-fluid dashboard" [options]="designationOptions"
+            [(ngModel)]="Designation" (onClick)="onSelect('d', 'click')" (keydown.enter)="onSelect('d', 'click')"
+            filter="true" resetFilterOnHide="true" optionLabel="label" [showClear]="true" name="Designation"
+            required>
+            <ng-template let-item pTemplate="selectedItem">
+              <span style="vertical-align:middle">{{item.label}}</span>
+            </ng-template>
+          </p-dropdown>
+        </div>
+        <div class="ui-float-label" style="margin-bottom: 10px">
+          <input class="icon2" type="Refno" size="30" pInputText [(ngModel)]="Refno" name="Refno" autocomplete="off"
+            required>
+          <label for="Refno">Reference No</label>
+        </div>
+        <div style="padding: 0px 15px 10px 24px;">
+          <label class="ui-g-10 label-fontsize dashboard" for="Refdate" style="text-align: center">Reference
+            Date</label>
+          <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" [maxDate]="maxDate" name="Refdate"
+            [(ngModel)]="Refdate" (ngModelChange)="onDateSelect()"></p-calendar>
+        </div>
+        <div style="padding: 0px 15px 10px 24px;">
+          <label class="ui-g-10 label-fontsize dashboard" for="Jrdate" style="text-align: center">J or R
+            Date</label>
+          <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" [maxDate]="maxDate" name="Jrdate" [(ngModel)]="Jrdate"
+            (ngModelChange)="onDateSelect()"></p-calendar>
+        </div>
+        <div>
+          <span style="padding: 0px 0px 0px 40px;">
+            <p-radioButton name="Jrtype" value="J" label="Join" for="Jrtype" [(ngModel)]="Jrtype"></p-radioButton>
+          </span>
+          <span style="padding: 0px 0px 0px 40px;">
+            <p-radioButton name="Jrtype" value="R" label="Relieve" for="Jrtype" [(ngModel)]="Jrtype">
+            </p-radioButton>
+          </span>
+        </div>
+        <div class="bottom" style="padding-left: 95px">
+          <div>
+            <button class="btn" style="padding: 4px 10px 4px 10px" pButton type="button"
+              (click)="onSubmit(employeeForm)" label=Submit></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->

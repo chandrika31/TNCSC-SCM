@@ -1,0 +1,202 @@
+<p-blockUI [blocked]="blockScreen">
+  <p-progressSpinner class="spinner" strokeWidth="4" *ngIf="blockScreen"></p-progressSpinner>
+  </p-blockUI>
+<app-header></app-header>
+<div class="ui-g-12 ui-md-12 ui-lg-12 content">
+  <app-menu *ngIf="canShowMenu"></app-menu>
+  <p-panel>
+    <p-header>
+      <div class="ui-g panel-header">
+        <div class="ui-g-4 dashboard">Cash Receipt Entry</div>
+      </div>
+    </p-header>
+    <div class="ui-g ui-fluid">
+      <p-toast (onClose)="onClose()" position="top-center" key="t-err" [modal]="true"></p-toast>
+      <div class="ui-g-12 dashboard">
+        <div class="ui-g-12 ui-md-3"></div>
+        <div class="ui-g-12 ui-md-12" style="border: 1px solid #18c5a9">
+          <form #f="ngForm" name="DDChequeForm">
+            <div class="ui-g-12 ui-md-12">
+              <div class="ui-g-3"></div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="rDate" class="label-fontsize-large">Receipt Date</label>
+                <p-calendar [(ngModel)]="receiptDate" [maxDate]="maxDate" [showIcon]="true" name="rDate"
+                  dateFormat="dd/mm/yy"></p-calendar>
+              </div>
+              <div class="ui-g-6 ui-md-2">
+                <label for="rNo" class="label-fontsize-large">Receipt No</label>
+                <input type="text" name="rNo" size="20" [(ngModel)]="receiptNo" maxlength="20" pInputText
+                  [readonly]="true" autocomplete="off">
+              </div>
+              <div class="ui-g-4 ui-md-1 ui-fluid" style="margin-top: 18px">
+                <button pButton type="button" label=View (click)="onView();resetForm(f)"></button>
+              </div>
+              <div class="ui-g-4 ui-md-1 ui-fluid" style="margin-top: 18px">
+                <button pButton type="button" label=Clear (click)="onClear()"></button>
+              </div>
+              <div class="ui-g-3"></div>
+            </div>
+            <div class="ui-g-12 ui-md-12 dashboard">
+              <div class="ui-g-12 ui-md-6">
+                <label for="detailsText" class="label-fontsize-large">Details</label>
+                <textarea name="detailsText" rows="3" cols="110" maxlength="250" pInputTextarea
+                autoResize="true" [(ngModel)]="details"></textarea>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="recvrType" class="label-fontsize-large">Recevior Type</label>
+                <p-dropdown #receivor name="recvrType" [options]="receivorTypeOptions"
+                 [(ngModel)]="receivorType" (onClick)="onSelect('click','rt')" (keyup.tab)="onSelect('tab','rt')"
+                  filter="true" optionLabel="label"  resetFilterOnHide="true"  (keyup.shift.tab)="onSelect('tab','rt')"
+                  filterMatchMode="startsWith" (onChange)="onLoadReceivor()" [showClear]="true">
+                  <ng-template let-item pTemplate="selectedItem">
+                    <span style="vertical-align:middle">{{item.label}}</span>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="recvdFrom" class="label-fontsize-large">Received from</label>
+                <p-autoComplete [(ngModel)]="receivedFrom" [suggestions]="filteredNames" [disabled]="isSelectedReceivor"
+                  (completeMethod)="filterNames($event)" [size]="30" name="recvdFrom" [minLength]="1" [dropdown]="true"
+                  (onSelect)="onReceivorSelection($event)" required>
+                  <ng-template let-data pTemplate="item">
+                    <div class="ui-helper-clearfix underlined-lightgrey">
+                      <div style="font-size:14px;margin:10px 10px 0 0">{{data.label}}</div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+              </div>
+             
+            </div>
+            <div class="ui-g-12 ui-md-12 dashboard">
+              <hr style="border: 1px solid #18c5a9">
+            </div>
+            <div class="ui-g-12">
+              <div class="ui-g-4 ui-md-2">
+                <label for="payType" class="label-fontsize-large">CA/DD/CH</label>
+                <p-dropdown #pay name="payType" [options]="paymentTypeOptions" [(ngModel)]="paymentType" filter="true"
+                  optionLabel="label" [showClear]="true" (keyup.tab)="onSelect('tab', 'pay')"
+                  filterMatchMode="startsWith" (onClick)="onSelect('click', 'pay')"
+                  (keyup.shift.tab)="onSelect('tab', 'pay')" required>
+                  <ng-template let-item pTemplate="selectedItem">
+                    <span style="vertical-align:middle">{{item.label}}</span>
+                  </ng-template>
+                </p-dropdown>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="chNo" class="label-fontsize-large">CHE/DD. No.</label>
+                <input type="text" name="chNo" pInputText [(ngModel)]="chequeNo" minlength="1" maxlength="12"
+                  autocomplete="off" required>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="chDate" class="label-fontsize-large">CHE/DD Date</label>
+                <p-calendar [(ngModel)]="chequeDate" [maxDate]="maxDate" [showIcon]="true" name="chDate"
+                  dateFormat="dd/mm/yy" required></p-calendar>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="bankName" class="label-fontsize-large">Bank</label>
+                <input type="text" size="20" name="bankName" [(ngModel)]="bank" minlength="1" maxlength="90" pInputText
+                  autocomplete="off" required>
+              </div>
+              <div class="ui-g-4 ui-md-2">
+                <label for="chAmnt" class="label-fontsize-large">CA/CH/DD Amt</label>
+                <input type="text" size="20" name="chAmnt" [(ngModel)]="chequeAmount" maxlength="10" pInputText
+                  oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');"
+                  appDecimalAmount autocomplete="off" required>
+              </div>
+              <div class="ui-g-1 ui-fluid" style="margin-top: 18px">
+                <button pButton type="button" label=Enter (click)="onEnter()" [disabled]="!f.valid"></button>
+              </div>
+            </div>
+            <div class="ui-g-12 ui-md-12">
+            </div>
+            <div class="ui-g-12 ui-md-12">
+            </div>
+            <div class="ui-g-12 no-pad-top" style="text-align: center !important">
+              <div class="ui-g-12 dashboard">
+              <div class="ui-g-8"></div>
+              <div class="ui-g-4 ui-md-2">
+                <label style="margin-top:5px"><b>TOTAL:</b>{{totalAmount}}</label>
+              </div>
+              <div class="ui-g-4 ui-md-1">
+                <button style="margin-top:5px" pButton type="button"
+                  [disabled]="(!receiptDate || DDChequeData.length=='0' || !details || (isViewed && !f.dirty))" label=Save (click)="onSave('1');resetForm(f)"></button>
+              </div>
+              <div class="ui-g-4 ui-md-1">
+                <button style="margin-top:5px" pButton type="button" [disabled]="((isViewed && f.dirty) || (!isViewed && !isSaveSucceed) || (!isViewed && f.dirty))" label=Print
+                  (click)="onPrint()"></button>
+              </div></div>
+              <div class="ui-g-12 no-pad-top">
+              <p-table [columns]="DDChequeCols" [value]="DDChequeData" [rows]="10" [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[10,20,30,40,50,100]" [responsive]="true" [paginator]="true">
+                <ng-template pTemplate="header" let-columns>
+                  <tr style="text-align: center;">
+                    <th *ngFor="let col of columns">
+                      {{col.header}}
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                  <tr (dblclick)="viewSelectedRow(rowData, rowIndex)">
+                    <td *ngFor="let col of columns">
+                      <div *ngIf="col.field === 'Amount'">
+                        <div style="text-align: end !important">
+                          {{rowData[col.field]}}
+                        </div>
+                      </div>
+                      <div *ngIf="col.field !== 'Amount'">
+                        {{rowData[col.field]}}
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </p-panel>
+</div>
+<p-dialog header="Cash-Receipt" [contentStyle]="{'overflow':'scroll'}" [modal]="true" [maximizable]="true"
+  [(visible)]="viewPane" [responsive]="true">
+  <div class="ui-g-12">
+    <div class="ui-g-6 ui-md-8 no-pad-top">
+      <label for="date" class="label-fontsize-large">Date</label>
+      <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" [maxDate]="maxDate" [(ngModel)]="viewDate"
+       name="date" (ngModelChange)="onView()"></p-calendar>
+    </div>
+    <div class="ui-g-4 ui-md-1 dashboard inline-margin">
+      <button class="ui-md-12 dashboard" pButton label=OK [disabled]="(!selected || selected==null)"
+        (click)="getDocByReceiptNo()"></button>
+    </div>
+    <div class="ui-g-4 ui-md-1 dashboard inline-margin">
+      <button class="ui-md-12 dashboard" pButton label=Cancel (click)="viewPane = false"></button>
+    </div>
+  </div>
+  <div class="ui-g-12 ui-fluid">
+    <p-table tabindex="-1" [columns]="ChequeReceiptNoCols" [(selection)]="selected" [value]="ChequeReceiptNoData"
+     selectionMode="single" [rows]="10" [rowsPerPageOptions]="[10,20,30,40,50,100]" [paginator]="true"
+      [responsive]="true" autoLayout="true" (onRowSelect)="onRowSelect($event)">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" style="width:80px">
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-dialog>
